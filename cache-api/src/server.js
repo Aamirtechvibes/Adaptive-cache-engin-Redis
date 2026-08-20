@@ -13,7 +13,10 @@ import resetRouter from "./routes/reset.js";
 const app = express();
 
 app.use(cors());
+
 app.use(express.json());
+
+
 app.use("/simulate", simulatorRoutes);
 app.use("/products", productRoutes);
 app.use("/cache", cacheRoutes);

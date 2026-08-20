@@ -311,7 +311,7 @@ function App() {
 
     const interval = setInterval(
       fetchProductData,
-      1000
+      5000
     );
 
     return () => clearInterval(interval);
@@ -324,7 +324,7 @@ function App() {
 
     const interval = setInterval(
       fetchAllProductsData,
-      1000
+      10000
     );
 
     return () => clearInterval(interval);
@@ -334,7 +334,7 @@ function App() {
   useEffect(() => {
     fetchMetrics();
 
-    const interval = setInterval(fetchMetrics, 2000);
+    const interval = setInterval(fetchMetrics, 10000);
 
     return () => clearInterval(interval);
   }, []);
