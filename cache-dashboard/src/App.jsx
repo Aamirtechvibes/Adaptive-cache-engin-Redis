@@ -69,19 +69,56 @@ function App() {
   const [isSimulating, setIsSimulating] = useState(false);
 
   async function simulateTraffic(mode) {
-    if (isSimulating) return;
+
+    if (isSimulating) {
+      console.log("Simulation already running");
+      return;
+    }
+
+    const selectedMode = trafficModes[mode];
+
+    if (!selectedMode) return;
 
     setIsSimulating(true);
 
     try {
-      // your existing fetch code
-    } catch (error) {
-      console.error(error);
-    } finally {
+
+      const response = await fetch(
+        `${API_URL}/simulate/spike`,
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json"
+          },
+
+          body: JSON.stringify({
+            productSlug,
+            requestsPerSecond:
+              selectedMode.requestsPerSecond,
+            duration:
+              selectedMode.duration
+          })
+        }
+      );
+
+      const data = await response.json();
+
+      console.log("Simulation started:", data);
+
+      // Keep button disabled until simulation should finish
       setTimeout(() => {
         setIsSimulating(false);
-      }, 3000);
+      }, selectedMode.duration * 1000);
+
+    } catch (error) {
+
+      console.error("Traffic simulation failed:", error);
+
+      setIsSimulating(false);
+
     }
+
   }
   async function fetchProductData() {
     try {
@@ -456,23 +493,25 @@ function App() {
 
             <button
               onClick={() => simulateTraffic("COLD")}
+              disabled={isSimulating}
             >
               🧊 Cold Traffic
             </button>
 
-
             <button
               onClick={() => simulateTraffic("WARM")}
+              disabled={isSimulating}
             >
               🟡 Warm Traffic
             </button>
-
 
             <button
               onClick={() => simulateTraffic("HOT")}
               disabled={isSimulating}
             >
-              {isSimulating ? "Simulation Running..." : "🔥 Traffic Spike"}
+              {isSimulating
+                ? "⏳ Simulation Running..."
+                : "🔥 Traffic Spike"}
             </button>
 
           </div>

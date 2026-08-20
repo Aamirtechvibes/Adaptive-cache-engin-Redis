@@ -137,6 +137,10 @@ body {
   background: #18243a;
 }
 
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 .app {
   min-height: 100vh;
   padding: 48px;
