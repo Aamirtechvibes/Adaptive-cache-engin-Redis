@@ -66,6 +66,23 @@ function App() {
   const [productData, setProductData] = useState(null);
   const [productsData, setProductsData] = useState([]);
 
+  const [isSimulating, setIsSimulating] = useState(false);
+
+  async function simulateTraffic(mode) {
+    if (isSimulating) return;
+
+    setIsSimulating(true);
+
+    try {
+      // your existing fetch code
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setTimeout(() => {
+        setIsSimulating(false);
+      }, 3000);
+    }
+  }
   async function fetchProductData() {
     try {
       const response = await fetch(
@@ -87,73 +104,89 @@ function App() {
   const trafficModes = {
     COLD: {
       requestsPerSecond: 1,
-      duration: 10
+      duration: 5
     },
 
     WARM: {
       requestsPerSecond: 3,
-      duration: 40
+      duration: 10
     },
 
     HOT: {
-      requestsPerSecond: 10,
-      duration: 60
+      requestsPerSecond: 5,
+      duration: 15
     }
   };
+  // const trafficModes = {
+  //   COLD: {
+  //     requestsPerSecond: 1,
+  //     duration: 10
+  //   },
+
+  //   WARM: {
+  //     requestsPerSecond: 3,
+  //     duration: 40
+  //   },
+
+  //   HOT: {
+  //     requestsPerSecond: 10,
+  //     duration: 60
+  //   }
+  // };
 
   async function simulateTraffic(mode) {
-  const selectedMode = trafficModes[mode];
+    const selectedMode = trafficModes[mode];
 
-  if (!selectedMode) {
-    console.error("Invalid traffic mode:", mode);
-    return;
-  }
-
-  const {
-    requestsPerSecond,
-    duration
-  } = selectedMode;
-
-  console.log("🚀 Starting simulation:", {
-    mode,
-    productSlug,
-    requestsPerSecond,
-    duration
-  });
-
-  const intervalTime = 1000 / requestsPerSecond;
-
-  const totalRequests =
-    requestsPerSecond * duration;
-
-  let requestsSent = 0;
-
-  const interval = setInterval(() => {
-
-    if (requestsSent >= totalRequests) {
-      clearInterval(interval);
-
-      console.log("✅ Traffic simulation completed");
-
+    if (!selectedMode) {
+      console.error("Invalid traffic mode:", mode);
       return;
     }
 
-    fetch(
-      `${API_URL}/products/${productSlug}`
-    )
-      .then((response) => response.json())
-      .then(() => {
-        requestsSent++;
-      })
-      .catch((error) => {
-        console.error(
-          "Request failed:",
-          error
-        );
-      });
+    const {
+      requestsPerSecond,
+      duration
+    } = selectedMode;
 
-  }, intervalTime);
-}
+    console.log("🚀 Starting simulation:", {
+      mode,
+      productSlug,
+      requestsPerSecond,
+      duration
+    });
+
+    const intervalTime = 1000 / requestsPerSecond;
+
+    const totalRequests =
+      requestsPerSecond * duration;
+
+    let requestsSent = 0;
+
+    const interval = setInterval(() => {
+
+      if (requestsSent >= totalRequests) {
+        clearInterval(interval);
+
+        console.log("✅ Traffic simulation completed");
+
+        return;
+      }
+
+      fetch(
+        `${API_URL}/products/${productSlug}`
+      )
+        .then((response) => response.json())
+        .then(() => {
+          requestsSent++;
+        })
+        .catch((error) => {
+          console.error(
+            "Request failed:",
+            error
+          );
+        });
+
+    }, intervalTime);
+  }
 
   async function fetchMetrics() {
     try {
@@ -411,10 +444,10 @@ function App() {
             </div>
 
             <button
-              className="simulate-button"
               onClick={() => simulateTraffic("HOT")}
+              disabled={isSimulating}
             >
-              🚀 Simulate Traffic Spike
+              {isSimulating ? "Simulation Running..." : "🔥 Traffic Spike"}
             </button>
 
           </div>
@@ -436,10 +469,10 @@ function App() {
 
 
             <button
-              className="hot-button"
               onClick={() => simulateTraffic("HOT")}
+              disabled={isSimulating}
             >
-              🔥 Traffic Spike
+              {isSimulating ? "Simulation Running..." : "🔥 Traffic Spike"}
             </button>
 
           </div>
