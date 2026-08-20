@@ -238,6 +238,35 @@ function App() {
     }
   }
 
+  async function resetDemo() {
+
+    try {
+
+      const response = await fetch(
+        `${API_URL}/reset`,
+        {
+          method: "POST"
+        }
+      );
+
+      const data = await response.json();
+
+      console.log("Demo reset:", data);
+
+      // Refresh dashboard immediately
+      await fetchProductData();
+
+    } catch (error) {
+
+      console.error(
+        "Failed to reset demo:",
+        error
+      );
+
+    }
+
+  }
+
   async function fetchAllProductsData() {
     try {
 
@@ -512,6 +541,13 @@ function App() {
               {isSimulating
                 ? "⏳ Simulation Running..."
                 : "🔥 Traffic Spike"}
+            </button>
+
+            <button
+              className="reset-button"
+              onClick={resetDemo}
+            >
+              🔄 Reset Demo
             </button>
 
           </div>
