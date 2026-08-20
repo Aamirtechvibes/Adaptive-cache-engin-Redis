@@ -1,0 +1,23 @@
+{
+  "name": "cache-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon src/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.112.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "redis": "^6.2.1"
+  },
+  "devDependencies": {
+    "autocannon": "^8.0.0"
+  }
+}
