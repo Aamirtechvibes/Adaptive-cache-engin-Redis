@@ -102,53 +102,58 @@ function App() {
   };
 
   async function simulateTraffic(mode) {
+  const selectedMode = trafficModes[mode];
 
-    const selectedMode = trafficModes[mode];
+  if (!selectedMode) {
+    console.error("Invalid traffic mode:", mode);
+    return;
+  }
 
-    if (!selectedMode) {
-      console.error("Invalid traffic mode:", mode);
+  const {
+    requestsPerSecond,
+    duration
+  } = selectedMode;
+
+  console.log("🚀 Starting simulation:", {
+    mode,
+    productSlug,
+    requestsPerSecond,
+    duration
+  });
+
+  const intervalTime = 1000 / requestsPerSecond;
+
+  const totalRequests =
+    requestsPerSecond * duration;
+
+  let requestsSent = 0;
+
+  const interval = setInterval(() => {
+
+    if (requestsSent >= totalRequests) {
+      clearInterval(interval);
+
+      console.log("✅ Traffic simulation completed");
+
       return;
     }
 
-    try {
-
-      console.log("🚀 Starting simulation:", {
-        mode,
-        productSlug,
-        requestsPerSecond: selectedMode.requestsPerSecond,
-        duration: selectedMode.duration
+    fetch(
+      `${API_URL}/products/${productSlug}`
+    )
+      .then((response) => response.json())
+      .then(() => {
+        requestsSent++;
+      })
+      .catch((error) => {
+        console.error(
+          "Request failed:",
+          error
+        );
       });
 
-      const response = await fetch(
-        `${API_URL}/simulate/spike`,
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type": "application/json"
-          },
-
-          body: JSON.stringify({
-            productSlug: productSlug,
-            requestsPerSecond: selectedMode.requestsPerSecond,
-            duration: selectedMode.duration
-          })
-        }
-      );
-
-      const data = await response.json();
-
-      console.log("Simulation started:", data);
-
-    } catch (error) {
-
-      console.error(
-        "Traffic simulation failed:",
-        error
-      );
-
-    }
-  }
+  }, intervalTime);
+}
 
   async function fetchMetrics() {
     try {
